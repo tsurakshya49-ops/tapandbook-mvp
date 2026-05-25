@@ -1,0 +1,63 @@
+:root {
+  --brand: #0D9488;
+  --brand-dark: #0a6a63;
+  --bg: #F0FDF4;
+  --card: #FFFFFF;
+  --text: #111827;
+  --muted: #6B7280;
+  --error: #DC2626;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; font-family: Inter, system-ui, Arial; background: var(--bg); color: var(--text); }
+.page-container { display: flex; justify-content: center; align-items: center; min-height: 100%; padding: 20px; }
+.card { width: 100%; max-width: 400px; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.logo { font-size: 34px; font-weight: 800; color: var(--brand); text-align: center; width: 100%; }
+.tagline { text-align: center; }
+.logo .calendar { font-size: 0.9em; }
+.tagline { color: #374151; margin: 8px 0 16px; font-size: 14px; }
+.field-label { font-size: 12px; color: #374151; margin: 12px 0 6px; }
+.text-input { width: 100%; height: 48px; border-radius: 10px; border: 1px solid #D1D5DB; background: #F3F4F6; padding: 0 12px; font-size: 14px; }
+.password-container { position: relative; display: block; width: 100%; }
+.password-wrap { display: flex; align-items: center; gap: 8px; }
+.password-input { width: 100%; padding-right: 40px; }
+.eye-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 18px; }
+.btn-primary { width: 100%; height: 48px; border-radius: 12px; background: var(--brand); color: #fff; font-weight: 700; border: none; cursor: pointer; margin-top: 8px; }
+.btn-outline { width: 100%; height: 48px; border-radius: 12px; border: 2px solid var(--brand); background: #fff; color: var(--brand); font-weight: 700; cursor: pointer; margin-top: 8px; }
+.btn-google { width: 100%; height: 48px; border-radius: 12px; background: #fff; border: 1px solid #ddd; margin-top: 8px; }
+.divider { text-align: center; margin: 12px 0; color: #6b7280; position: relative; }
+.divider span { background: #fff; padding: 0 10px; position: relative; z-index: 1; }
+.divider:before { content:''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #e5e7eb; }
+.links { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.link { color: #0f172a; text-decoration: none; font-size: 14px; }
+.forgot-link { color: #0D9488; font-size: 14px; text-align: right; display: block; margin-top: 6px; text-decoration: none; }
+.create-account { color: #0D9488; font-weight: 800; display: block; text-align: center; margin-top: 6px; }
+.error { color: var(--error); font-size: 12px; margin-top: 6px; }
+.stepbar { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.step { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #e5e7eb; color:#374151; }
+.step.filled { background: var(--brand); color:white; }
+.step-line { height: 2px; background:#e5e7eb; flex:1; }
+.step.active { border-color: var(--brand); color: var(--brand); font-weight:700; }
+.sub { color: var(--muted); font-size: 14px; }
+.slot-row { display:flex; gap: 12px; margin: 12px 0; }
+.slot-card { padding: 10px 12px; border-radius: 8px; border: 2px solid #e5e7eb; cursor: pointer; width: 50%; text-align: center; }
+.slot-card.selected { border-color: var(--brand); background: #E6F6F3; }
+.slot-icon { font-size: 18px; display:block; }
+.slot-text { display:block; font-size: 14px; margin-top: 4px; }
+.summary { padding: 12px; border-radius: 8px; }
+.row { display:flex; justify-content: space-between; font-size: 14px; margin: 6px 0; }
+.label { font-weight: 600; }
+.token { font-size: 22px; font-weight: 700; }
+.teal { color: var(--brand); font-weight: 800; }
+.red { color: var(--error); font-weight: 800; }
+.icon-circle { width: 80px; height: 80px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:40px; margin: 8px auto; }
+.icon-circle.success { background: #10b981; color:#fff; display:flex; align-items:center; justify-content:center; }
+.icon-circle.failure { background: #ef4444; color:#fff; display:flex; align-items:center; justify-content:center; }
+.qr-area { text-align:center; margin: 12px 0; }
+.caption { font-size: 12px; color: #6b7280; }
+.button-row { display:flex; gap: 8px; margin-top: 8px; }
+.center { text-align:center; }
+.card.center { text-align:center; }
+.countries { }
+.focus { outline: none; }
