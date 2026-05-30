@@ -51,6 +51,17 @@ class UserCreate(BaseModel):
     emergency_contact: str = None
 
 
+class LoginRequest(BaseModel):
+    phone: str
+    password: str
+
+
+class SignupRequest(BaseModel):
+    phone: str
+    password: str
+    name: str
+
+
 # Health check endpoint
 @app.get("/")
 def health_check():
@@ -128,6 +139,28 @@ def get_user_by_phone(phone: str):
             raise HTTPException(status_code=404, detail="User not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# POST /auth/login - Authenticate user with Supabase Auth
+@app.post("/auth/login")
+def login(request: LoginRequest):
+    try:
+        email = f"{request.phone}@tapandbook.com"
+        result = supabase.auth.sign_in_with_password({"email": email, "password": request.password})
+        return {"access_token": result.session.access_token, "user": {"id": result.user.id, "email": result.user.email}}
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid phone or password")
+
+
+# POST /auth/signup - Register new user with Supabase Auth
+@app.post("/auth/signup")
+def signup(request: SignupRequest):
+    try:
+        email = f"{request.phone}@tapandbook.com"
+        result = supabase.auth.sign_up({"email": email, "password": request.password, "options": {"data": {"name": request.name}}})
+        return {"access_token": result.session.access_token, "user": {"id": result.user.id, "email": result.user.email, "name": request.name}}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # Run the server

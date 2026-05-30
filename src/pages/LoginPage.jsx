@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { loginUser } from '../services/api.js'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -7,10 +8,12 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   const [errors, setErrors] = useState({ phone: '', password: '' })
+  const [loginError, setLoginError] = useState('')
 
-  const onLogin = () => {
+  const onLogin = async () => {
     let hasError = false
     const newErrors = { phone: '', password: '' }
+    setLoginError('')
     if (!phone.trim()) {
       newErrors.phone = 'Please enter your mobile number'
       hasError = true
@@ -21,8 +24,14 @@ const LoginPage = () => {
     }
     setErrors(newErrors)
     if (!hasError) {
-      // navigate to dashboard after successful login
-      navigate('/dashboard', { state: { phone } })
+      try {
+        const result = await loginUser(phone, password)
+        const userName = localStorage.getItem('userName') || 'User'
+        localStorage.setItem('isLoggedIn', 'true')
+        navigate('/dashboard', { state: { name: userName, phone } })
+      } catch (error) {
+        setLoginError('Invalid phone or password')
+      }
     }
   }
 
@@ -61,11 +70,14 @@ const LoginPage = () => {
         <a href="#" className="forgot-link" aria-label="forgot-password">Forgot Password?</a>
         {errors.password ? <div className="error">{errors.password}</div> : null}
 
+        {loginError ? <div className="error" style={{ textAlign: 'center', marginBottom: 8 }}>{loginError}</div> : null}
         <button className="btn-primary" onClick={onLogin}>Login</button>
 
         <div className="divider"><span>OR</span></div>
 
-        <button className="btn-google" type="button" aria-label="Continue with Google" onClick={() => navigate('/dashboard')}>
+        
+
+       <button className="btn-google" type="button" onClick={() => { localStorage.setItem('isLoggedIn', 'true'); navigate('/dashboard'); }}>
           <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle', marginRight: 6 }}>
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.35 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -77,7 +89,7 @@ const LoginPage = () => {
         </button>
 
         <div className="links" style={{textAlign: 'center'}}>
-          <a href="#" className="link create-account" onClick={(e) => { e.preventDefault(); navigate('/dashboard') }}>New patient? Create an Account</a>
+          <a href="#" className="link create-account" onClick={(e) => { e.preventDefault(); navigate('/signup') }}>New patient? Create an Account</a>
         </div>
       </div>
     </div>

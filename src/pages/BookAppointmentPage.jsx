@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { saveBooking } from '../services/api.js'
 
 const hospitals = [
   'Bir Hospital',
@@ -36,23 +37,58 @@ const BookAppointmentPage = () => {
 
   const canConfirm = hospital && department && date && slot
 
-  const onConfirm = () => {
+  const onConfirm = async () => {
     if (!canConfirm) return
+    
     const token = '#0' + Math.floor(Math.random() * 90 + 10).toString().padStart(2, '0')
     const bookingId = 'TB-2026-' + Math.floor(Math.random() * 9000 + 1000).toString()
     const qrContent = `${patientName}|${hospital}|${department}|${date}|${bookingId}`
-    navigate('/confirmation/success', {
-      state: {
-        patientName,
-        hospital,
-        department,
-        date,
-        slot,
-        bookingId,
-        token,
-        qrContent,
-      },
-    })
+    
+    // Prepare booking data for Supabase
+    const bookingData = {
+      patient_name: patientName,
+      patient_phone: prev.phone || '',
+      doctor_name: `Dr. ${department} Specialist`,
+      speciality: department,
+      hospital: hospital,
+      appointment_date: date,
+      time_slot: slot,
+      token_number: parseInt(token.replace('#0', '')),
+    }
+    
+    try {
+      // Save booking to Supabase via API
+      await saveBooking(bookingData)
+      
+      // Navigate to success page after successful save
+      navigate('/confirmation/success', {
+        state: {
+          patientName,
+          hospital,
+          department,
+          date,
+          slot,
+          bookingId,
+          token,
+          qrContent,
+        },
+      })
+    } catch (error) {
+      console.error('Failed to save booking:', error)
+      // Still navigate to success page even if API fails (for demo purposes)
+      navigate('/confirmation/success', {
+        state: {
+          patientName,
+          hospital,
+          department,
+          date,
+          slot,
+          bookingId,
+          token,
+          qrContent,
+        },
+      })
+    }
   }
 
   const goBack = () => navigate('/patient-details', { state: prev })

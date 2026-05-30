@@ -6,18 +6,18 @@ import BottomNav from '../components/BottomNav.jsx'
 const DoctorCard = ({ d, onView }) => {
   const initials = d.name.split(' ').map(n => n.charAt(0)).slice(0,2).join('')
   return (
-    <div onClick={() => onView(d.id)} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,.08)', cursor: 'pointer' }}>
-      <div style={{ width: 50, height: 50, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, marginRight: 12 }}>{initials}</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700 }}>{d.name}</div>
-        <div style={{ color: '#6b7280', fontSize: 12 }}>{d.specialty} • {d.hospital}</div>
-        <div>⭐ {d.rating} ({d.reviews} reviews)</div>
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        <div style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #0D9488', color: '#0D9488', fontSize: 12, display: 'inline-block' }}>{d.availability || 'Available'}</div>
-        <div style={{ marginTop: 6 }}>
-          <button style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #0D9488', background: '#fff', color: '#0D9488' }} onClick={(e) => { e.stopPropagation(); onView(d.id) }}>View Profile</button>
+    <div onClick={() => onView(d.id)} style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 12, padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,.08)', cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+        <div style={{ width: 50, height: 50, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, marginRight: 12 }}>{initials}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 700 }}>{d.name}</div>
+          <div style={{ color: '#6b7280', fontSize: 12 }}>{d.specialty} • {d.hospital}</div>
+          <div>⭐ {d.rating} ({d.reviews} reviews)</div>
         </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #0D9488', color: '#0D9488', fontSize: 12, display: 'inline-block' }}>{d.availability || 'Available'}</div>
+        <button style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #0D9488', background: '#fff', color: '#0D9488' }} onClick={(e) => { e.stopPropagation(); onView(d.id) }}>View Profile</button>
       </div>
     </div>
   )

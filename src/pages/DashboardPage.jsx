@@ -5,7 +5,7 @@ import BottomNav from '../components/BottomNav.jsx'
 const DashboardPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const name = location.state?.name ?? 'Aryan'
+  const name = location.state?.name ?? localStorage.getItem('userName') ?? 'User'
 
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
@@ -57,13 +57,13 @@ const DashboardPage = () => {
 
       <div style={{ padding: 16 }}>
         <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Available Doctors Today</div>
-        <div style={{ display: 'flex', overflowX: 'auto', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {[
             { name: 'Dr. Ramesh Sharma', spec: 'Cardiologist', hosp: 'Bir Hospital', rating: 4.8 },
             { name: 'Dr. Sita Koirala', spec: 'General Physician', hosp: 'TUTH', rating: 4.6 },
             { name: 'Dr. Bikash Thapa', spec: 'Orthopaedic Surgeon', hosp: 'Bir Hospital', rating: 4.7 },
           ].map((d, idx) => (
-            <div key={idx} style={{ minWidth: 240, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
                 <div>

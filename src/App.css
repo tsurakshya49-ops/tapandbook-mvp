@@ -10,8 +10,17 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
+#root {
+  max-width: 390px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f0f9f9;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.15);
+  overflow-x: hidden;
+}
 body { margin: 0; font-family: Inter, system-ui, Arial; background: var(--bg); color: var(--text); }
-.page-container { display: flex; justify-content: center; align-items: center; min-height: 100%; padding: 20px; }
+.page-container { display: block; min-height: 100%; }
 .card { width: 100%; max-width: 400px; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
 .logo { font-size: 34px; font-weight: 800; color: var(--brand); text-align: center; width: 100%; }
 .tagline { text-align: center; }
