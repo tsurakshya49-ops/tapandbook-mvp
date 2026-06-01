@@ -158,6 +158,17 @@ def signup(request: SignupRequest):
     try:
         email = f"{request.phone}@tapandbook.com"
         result = supabase.auth.sign_up({"email": email, "password": request.password, "options": {"data": {"name": request.name}}})
+        if result.session is None:
+            # Email confirmation is enabled in Supabase - user created but no session yet
+            return {
+                "access_token": None,
+                "user": {
+                    "id": result.user.id,
+                    "email": result.user.email,
+                    "name": request.name
+                },
+                "message": "Account created successfully. Please log in."
+            }
         return {"access_token": result.session.access_token, "user": {"id": result.user.id, "email": result.user.email, "name": request.name}}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

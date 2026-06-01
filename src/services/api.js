@@ -1,7 +1,20 @@
 // Tap&Book API Service
 // Connects React frontend to Python FastAPI backend
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE_URL = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL !== 'leave completely empty') 
+  ? import.meta.env.VITE_API_URL 
+  : ''
+
+// Safely parse JSON response, handling empty or non-JSON bodies
+const parseResponse = async (response) => {
+  const text = await response.text()
+  if (!text) return {}
+  try {
+    return JSON.parse(text)
+  } catch {
+    return { detail: `Server error: ${response.status} ${response.statusText}` }
+  }
+}
 
 // Save a new booking to Supabase
 export const saveBooking = async (bookingData) => {
@@ -15,11 +28,11 @@ export const saveBooking = async (bookingData) => {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Failed to save booking')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     return result
   } catch (error) {
     console.error('Error saving booking:', error)
@@ -38,11 +51,11 @@ export const getBookings = async () => {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Failed to fetch bookings')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     return result.data || []
   } catch (error) {
     console.error('Error fetching bookings:', error)
@@ -62,11 +75,11 @@ export const saveUser = async (userData) => {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Failed to save user')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     return result
   } catch (error) {
     console.error('Error saving user:', error)
@@ -88,11 +101,11 @@ export const getUserByPhone = async (phone) => {
       if (response.status === 404) {
         return null // User not found
       }
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Failed to fetch user')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     return result.data || null
   } catch (error) {
     console.error('Error fetching user:', error)
@@ -112,11 +125,11 @@ export const loginUser = async (phone, password) => {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Invalid phone or password')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     localStorage.setItem('access_token', result.access_token)
     const userName = result.user?.name || result.user?.email?.split('@')[0] || 'User'
     localStorage.setItem('userName', userName)
@@ -139,11 +152,11 @@ export const signupUser = async (phone, password, name) => {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorData = await parseResponse(response)
       throw new Error(errorData.detail || 'Signup failed')
     }
 
-    const result = await response.json()
+    const result = await parseResponse(response)
     localStorage.setItem('access_token', result.access_token)
     localStorage.setItem('userName', name)
     return result
