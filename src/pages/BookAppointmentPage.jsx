@@ -45,9 +45,10 @@ const BookAppointmentPage = () => {
     const qrContent = `${patientName}|${hospital}|${department}|${date}|${bookingId}`
     
     // Prepare booking data for Supabase
+    const patientPhone = localStorage.getItem('userPhone') || prev.phone || ''
     const bookingData = {
       patient_name: patientName,
-      patient_phone: prev.phone || '',
+      patient_phone: patientPhone,
       doctor_name: `Dr. ${department} Specialist`,
       speciality: department,
       hospital: hospital,

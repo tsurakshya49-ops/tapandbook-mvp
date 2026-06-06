@@ -34,8 +34,10 @@ const BookingHistoryPage = () => {
         const data = await getBookings()
         console.log('Fetched bookings data:', data)
         const bookingsList = Array.isArray(data) ? data : []
-        console.log('Bookings list length:', bookingsList.length)
         const userPhone = localStorage.getItem('userPhone')
+        console.log('UserPhone from localStorage:', userPhone)
+        console.log('First booking patient_phone:', bookingsList[0]?.patient_phone)
+        console.log('Bookings list length:', bookingsList.length)
         const userBookings = userPhone ? bookingsList.filter(b => b.patient_phone === userPhone) : bookingsList
         setBookings(userBookings)
         setError(null)

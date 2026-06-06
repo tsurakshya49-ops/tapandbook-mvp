@@ -17,6 +17,8 @@ const DashboardPage = () => {
         const data = await getBookings()
         const allBookings = Array.isArray(data) ? data : []
         const userPhone = localStorage.getItem('userPhone')
+        console.log('Dashboard - UserPhone from localStorage:', userPhone)
+        console.log('Dashboard - First booking patient_phone:', allBookings[0]?.patient_phone)
         const userBookings = userPhone ? allBookings.filter(b => b.patient_phone === userPhone) : allBookings
         setTotalBookings(userBookings.length)
         setUpcomingCount(userBookings.filter(b => b.status === 'Confirmed' || b.status === 'confirmed').length)
