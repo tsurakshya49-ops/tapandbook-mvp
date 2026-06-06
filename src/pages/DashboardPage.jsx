@@ -6,7 +6,7 @@ import { getBookings } from '../services/api.js'
 const DashboardPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const name = location.state?.name ?? localStorage.getItem('userName') ?? 'User'
+  const name = localStorage.getItem('userName') || location.state?.name || 'User'
   const [totalBookings, setTotalBookings] = useState(0)
   const [upcomingCount, setUpcomingCount] = useState(0)
   const [completedCount, setCompletedCount] = useState(0)

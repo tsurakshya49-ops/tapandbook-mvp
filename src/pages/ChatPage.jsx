@@ -3,19 +3,31 @@ import BottomNav from '../components/BottomNav.jsx'
 
 const getBotReply = (message) => {
   const lower = message.toLowerCase()
+  if (lower.includes('unwell') || lower.includes('sick') || lower.includes('fever') || lower.includes('pain') || lower.includes('feeling')) {
+    return "I'm sorry to hear that. Please book an appointment with a doctor through the Home tab. For emergencies, call 102."
+  }
   if (lower.includes('book') || lower.includes('appointment')) {
-    return "To book an appointment, go to the Home tab and tap 'Book an Appointment'."
+    return "To book an appointment: tap Home → Book an Appointment → select a doctor → choose a time slot → confirm."
   }
-  if (lower.includes('doctor')) {
-    return "Browse available doctors in the Doctors tab."
+  if (lower.includes('doctor') || lower.includes('specialist')) {
+    return "Browse all available doctors in the Doctors tab. You can see their speciality, hospital, and ratings."
   }
-  if (lower.includes('cancel')) {
-    return "To cancel a booking, please call the hospital directly."
+  if (lower.includes('cancel') || lower.includes('reschedule')) {
+    return "To cancel or reschedule, please contact the hospital directly or call their reception."
   }
-  if (lower.includes('hello') || lower.includes('hi')) {
-    return "Hello! How can I help you today? I can assist with bookings, doctors, and hospital information."
+  if (lower.includes('hospital')) {
+    return "Tap&Book connects you with government hospitals in Nepal including Bir Hospital and TUTH."
   }
-  return "I'm here to help with your appointments. You can ask about booking, doctors, or hospitals."
+  if (lower.includes('token') || lower.includes('queue')) {
+    return "Your token number is assigned when you book. Arrive at the hospital and show your token number at reception."
+  }
+  if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+    return "Hello! I'm your Tap&Book assistant. I can help with bookings, doctors, hospitals, and appointments."
+  }
+  if (lower.includes('thank')) {
+    return "You're welcome! Stay healthy and take care."
+  }
+  return "I can help you with booking appointments, finding doctors, or hospital information. What would you like to know?"
 }
 
 const ChatPage = () => {

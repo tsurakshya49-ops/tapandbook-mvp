@@ -38,7 +38,7 @@ const SuccessPage = () => {
 
         <div className="button-row">
           <button className="btn-primary" onClick={() => navigate('/patient-details')}>Book Another Appointment</button>
-          <button className="btn-outline" onClick={() => navigate('/')}>Return to Home</button>
+          <button className="btn-outline" onClick={() => navigate('/dashboard')}>Return to Home</button>
         </div>
       </div>
     </div>

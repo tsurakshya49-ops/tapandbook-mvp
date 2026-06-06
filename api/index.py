@@ -98,7 +98,7 @@ def create_booking(booking: BookingCreate):
 @app.get("/bookings")
 def get_bookings():
     try:
-        result = supabase.table("bookings").select("*").order("created_at", desc=True).execute()
+        result = supabase.table("bookings").select("*").execute()
         return {"success": True, "data": result.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -147,7 +147,8 @@ def login(request: LoginRequest):
     try:
         email = f"{request.phone}@tapandbook.com"
         result = supabase.auth.sign_in_with_password({"email": email, "password": request.password})
-        return {"access_token": result.session.access_token, "user": {"id": result.user.id, "email": result.user.email}}
+        user_name = result.user.user_metadata.get("name", "") if result.user.user_metadata else ""
+        return {"access_token": result.session.access_token, "user": {"id": result.user.id, "email": result.user.email, "name": user_name}}
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid phone or password")
 

@@ -15,7 +15,7 @@ const FailurePage = () => {
         </div>
         <div className="button-row">
           <button className="btn-primary" onClick={() => navigate('/book-appointment')}>Try Again</button>
-          <button className="btn-outline" onClick={() => navigate('/')}>Return to Home</button>
+          <button className="btn-outline" onClick={() => navigate('/dashboard')}>Return to Home</button>
         </div>
       </div>
     </div>
