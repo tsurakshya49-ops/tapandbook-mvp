@@ -1,10 +1,31 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import BottomNav from '../components/BottomNav.jsx'
+import { getBookings } from '../services/api.js'
 
 const ProfilePage = () => {
   const name = localStorage.getItem('userName') ?? 'User'
   const phone = localStorage.getItem('userPhone') ?? 'Not set'
   const initial = name.charAt(0).toUpperCase()
+  const [totalAppointments, setTotalAppointments] = useState(0)
+  const [hospitalsVisited, setHospitalsVisited] = useState(0)
+  const [doctorsConsulted, setDoctorsConsulted] = useState(0)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getBookings()
+        const allBookings = Array.isArray(data) ? data : []
+        const userPhone = localStorage.getItem('userPhone')
+        const userBookings = userPhone ? allBookings.filter(b => b.patient_phone === userPhone) : allBookings
+        setTotalAppointments(userBookings.length)
+        setHospitalsVisited(new Set(userBookings.map(b => b.hospital).filter(Boolean)).size)
+        setDoctorsConsulted(new Set(userBookings.map(b => b.doctor_name).filter(Boolean)).size)
+      } catch (err) {
+        console.error('Failed to fetch profile stats:', err)
+      }
+    }
+    fetchStats()
+  }, [])
 
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
@@ -37,9 +58,9 @@ const ProfilePage = () => {
       <div style={{ width: '100%', maxWidth: 520, margin: '0 auto', padding: 12 }}>
         <div className="card" style={{ padding: 12 }}>
           <div style={{ fontWeight: 700 }}>App Statistics</div>
-          <div className="row"><span className="label">Total Appointments</span><span> 3</span></div>
-          <div className="row"><span className="label">Hospitals Visited</span><span> 2</span></div>
-          <div className="row"><span className="label">Doctors Consulted</span><span> 3</span></div>
+          <div className="row"><span className="label">Total Appointments</span><span> {totalAppointments}</span></div>
+          <div className="row"><span className="label">Hospitals Visited</span><span> {hospitalsVisited}</span></div>
+          <div className="row"><span className="label">Doctors Consulted</span><span> {doctorsConsulted}</span></div>
         </div>
       </div>
 
