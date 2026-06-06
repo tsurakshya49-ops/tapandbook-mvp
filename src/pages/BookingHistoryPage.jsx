@@ -35,7 +35,9 @@ const BookingHistoryPage = () => {
         console.log('Fetched bookings data:', data)
         const bookingsList = Array.isArray(data) ? data : []
         console.log('Bookings list length:', bookingsList.length)
-        setBookings(bookingsList)
+        const userPhone = localStorage.getItem('userPhone')
+        const userBookings = userPhone ? bookingsList.filter(b => b.patient_phone === userPhone) : bookingsList
+        setBookings(userBookings)
         setError(null)
       } catch (err) {
         console.error('Failed to fetch bookings:', err)

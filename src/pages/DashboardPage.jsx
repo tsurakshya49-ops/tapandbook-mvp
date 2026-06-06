@@ -15,11 +15,12 @@ const DashboardPage = () => {
     const fetchStats = async () => {
       try {
         const data = await getBookings()
-        const bookings = Array.isArray(data) ? data : []
-        setTotalBookings(bookings.length)
-        const today = new Date().toISOString().split('T')[0]
-        setUpcomingCount(bookings.filter(b => b.appointment_date >= today).length)
-        setCompletedCount(bookings.filter(b => b.status === 'Completed').length)
+        const allBookings = Array.isArray(data) ? data : []
+        const userPhone = localStorage.getItem('userPhone')
+        const userBookings = userPhone ? allBookings.filter(b => b.patient_phone === userPhone) : allBookings
+        setTotalBookings(userBookings.length)
+        setUpcomingCount(userBookings.filter(b => b.status === 'Confirmed' || b.status === 'confirmed').length)
+        setCompletedCount(userBookings.filter(b => b.status === 'Completed' || b.status === 'completed').length)
       } catch (err) {
         console.error('Failed to fetch booking stats:', err)
       }
