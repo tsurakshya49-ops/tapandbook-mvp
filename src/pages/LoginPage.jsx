@@ -28,6 +28,7 @@ const LoginPage = () => {
         const result = await loginUser(phone, password)
         const userName = localStorage.getItem('userName') || 'User'
         localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userPhone', phone)
         navigate('/dashboard', { state: { name: userName, phone } })
       } catch (error) {
         setLoginError('Invalid phone or password')

@@ -2,6 +2,10 @@ import React from 'react'
 import BottomNav from '../components/BottomNav.jsx'
 
 const ProfilePage = () => {
+  const name = localStorage.getItem('userName') ?? 'User'
+  const phone = localStorage.getItem('userPhone') ?? 'Not set'
+  const initial = name.charAt(0).toUpperCase()
+
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
       <div style={{ padding: 12 }}>
@@ -9,11 +13,11 @@ const ProfilePage = () => {
       </div>
       <div style={{ width: '100%', maxWidth: 520, margin: '0 auto', padding: 12 }}>
         <div className="card" style={{ display: 'flex', alignItems: 'center', padding: 16, gap: 12 }}>
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>A</div>
+          <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 32 }}>{initial}</div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 18 }}>Aryan Thapa</div>
-            <div style={{ color: '#6b7280' }}>+977 9812345678</div>
-            <div>Member since: January 2026</div>
+            <div style={{ fontWeight: 700, fontSize: 18 }}>{name}</div>
+            <div style={{ color: '#6b7280' }}>{phone}</div>
+            <div>Member since: 2026</div>
           </div>
         </div>
       </div>
@@ -23,10 +27,10 @@ const ProfilePage = () => {
           <div className="row" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span className="label">Personal Details</span>
           </div>
-          <div className="row"><span className="label">Date of Birth</span><span> 15 March 1998</span></div>
-          <div className="row"><span className="label">Gender</span><span> Male</span></div>
-          <div className="row"><span className="label">Address</span><span> Kathmandu, Bagmati Province</span></div>
-          <div className="row"><span className="label">Emergency Contact</span><span> +977 9800000000</span></div>
+          <div className="row"><span className="label">Date of Birth</span><span> Not provided</span></div>
+          <div className="row"><span className="label">Gender</span><span> Not provided</span></div>
+          <div className="row"><span className="label">Address</span><span> Not provided</span></div>
+          <div className="row"><span className="label">Emergency Contact</span><span> Not provided</span></div>
         </div>
       </div>
 

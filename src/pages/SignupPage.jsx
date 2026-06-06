@@ -46,6 +46,7 @@ const SignupPage = () => {
       try {
         await signupUser(phone, password, name)
         localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userPhone', phone)
         navigate('/dashboard', { state: { name, phone } })
       } catch (error) {
         setSignupError(error.message || 'Signup failed. Please try again.')

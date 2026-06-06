@@ -1,11 +1,31 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import BottomNav from '../components/BottomNav.jsx'
+import { getBookings } from '../services/api.js'
 
 const DashboardPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const name = location.state?.name ?? localStorage.getItem('userName') ?? 'User'
+  const [totalBookings, setTotalBookings] = useState(0)
+  const [upcomingCount, setUpcomingCount] = useState(0)
+  const [completedCount, setCompletedCount] = useState(0)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getBookings()
+        const bookings = Array.isArray(data) ? data : []
+        setTotalBookings(bookings.length)
+        const today = new Date().toISOString().split('T')[0]
+        setUpcomingCount(bookings.filter(b => b.appointment_date >= today).length)
+        setCompletedCount(bookings.filter(b => b.status === 'Completed').length)
+      } catch (err) {
+        console.error('Failed to fetch booking stats:', err)
+      }
+    }
+    fetchStats()
+  }, [])
 
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
@@ -14,7 +34,7 @@ const DashboardPage = () => {
           <div style={{ fontSize: 20, fontWeight: 600 }}>Good morning, {name} 👋</div>
           <div style={{ color: '#64748b' }}>Find and book your hospital appointment</div>
         </div>
-        <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>A</div>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>{name.charAt(0).toUpperCase()}</div>
       </div>
 
       <div className="search" style={{ padding: 16 }}>
@@ -28,18 +48,28 @@ const DashboardPage = () => {
         <div style={{ display: 'flex', gap: 12 }}>
           <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             <div style={{ fontSize: 14, color: '#64748b' }}>Total Bookings</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>3</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{totalBookings}</div>
           </div>
           <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             <div style={{ fontSize: 14, color: '#64748b' }}>Upcoming</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>1</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{upcomingCount}</div>
           </div>
           <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             <div style={{ fontSize: 14, color: '#64748b' }}>Completed</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>2</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{completedCount}</div>
           </div>
         </div>
       </div>
+
+      {totalBookings === 0 && (
+        <div style={{ padding: 16 }}>
+          <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', textAlign: 'center' }}>
+            <div style={{ fontSize: 40 }}>🎉</div>
+            <div style={{ fontWeight: 700, fontSize: 16, marginTop: 8 }}>Welcome to Tap&Book!</div>
+            <div style={{ color: '#64748b', marginTop: 4 }}>Book your first appointment to get started.</div>
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: 16 }}>
         <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Government Hospitals Near You</div>
