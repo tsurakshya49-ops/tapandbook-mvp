@@ -50,7 +50,7 @@ const getBotReply = (message) => {
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([
-    { id: 1, from: 'bot', text: "Hi! I'm your Tap&Book health assistant. I can suggest basic medicines for common symptoms. ⚠️ Disclaimer: These are general suggestions only. Always consult a qualified doctor for proper diagnosis and treatment." }
+    { id: 1, from: 'bot', text: "Hello! I'm your Tap&Book health assistant. How can I help you today?" }
   ])
   const [input, setInput] = useState('')
   const messagesEndRef = useRef(null)
