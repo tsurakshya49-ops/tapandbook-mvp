@@ -3,6 +3,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import BottomNav from '../components/BottomNav.jsx'
 import { getBookings } from '../services/api.js'
 
+const hospitalsData = [
+  { name: 'Bir Hospital', type: 'General & Specialist', wait: '~45 min', rating: 4.2, open: true },
+  { name: 'Tribhuvan University Teaching Hospital', type: 'Teaching & Specialist', wait: '~60 min', rating: 4.4, open: true },
+  { name: 'Kanti Children\'s Hospital', type: 'Paediatrics', wait: '~30 min', rating: 4.0, open: true },
+]
+
+const doctorsData = [
+  { name: 'Dr. Ramesh Sharma', spec: 'Cardiologist', hosp: 'Bir Hospital', rating: 4.8 },
+  { name: 'Dr. Sita Koirala', spec: 'General Physician', hosp: 'TUTH', rating: 4.6 },
+  { name: 'Dr. Bikash Thapa', spec: 'Orthopaedic Surgeon', hosp: 'Bir Hospital', rating: 4.7 },
+]
+
 const DashboardPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -10,6 +22,7 @@ const DashboardPage = () => {
   const [totalBookings, setTotalBookings] = useState(0)
   const [upcomingCount, setUpcomingCount] = useState(0)
   const [completedCount, setCompletedCount] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -30,6 +43,19 @@ const DashboardPage = () => {
     fetchStats()
   }, [])
 
+  const query = searchQuery.toLowerCase().trim()
+  const isSearching = query.length > 0
+
+  const filteredHospitals = hospitalsData.filter(h =>
+    h.name.toLowerCase().includes(query) || h.type.toLowerCase().includes(query)
+  )
+
+  const filteredDoctors = doctorsData.filter(d =>
+    d.name.toLowerCase().includes(query) ||
+    d.spec.toLowerCase().includes(query) ||
+    d.hosp.toLowerCase().includes(query)
+  )
+
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
       <div className="header" style={{ padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -43,28 +69,44 @@ const DashboardPage = () => {
       <div className="search" style={{ padding: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', background: '#f3f4f6', borderRadius: 12, padding: '10px 12px' }}>
           <span style={{ marginRight: 8 }}>🔎</span>
-          <input placeholder="Search doctors, hospitals..." style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%' }} />
+          <input
+            placeholder="Search doctors, hospitals..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
+          />
+          {isSearching && (
+            <button
+              onClick={() => setSearchQuery('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: '#6b7280', padding: '0 4px' }}
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
-      <div style={{ padding: 16 }}>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: 14, color: '#64748b' }}>Total Bookings</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{totalBookings}</div>
-          </div>
-          <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: 14, color: '#64748b' }}>Upcoming</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{upcomingCount}</div>
-          </div>
-          <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-            <div style={{ fontSize: 14, color: '#64748b' }}>Completed</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{completedCount}</div>
+      {/* Stats - hidden during search */}
+      {!isSearching && (
+        <div style={{ padding: 16 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+              <div style={{ fontSize: 14, color: '#64748b' }}>Total Bookings</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{totalBookings}</div>
+            </div>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+              <div style={{ fontSize: 14, color: '#64748b' }}>Upcoming</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{upcomingCount}</div>
+            </div>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+              <div style={{ fontSize: 14, color: '#64748b' }}>Completed</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: '#0f766e' }}>{completedCount}</div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {totalBookings === 0 && (
+      {!isSearching && totalBookings === 0 && (
         <div style={{ padding: 16 }}>
           <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', textAlign: 'center' }}>
             <div style={{ fontSize: 40 }}>🎉</div>
@@ -74,42 +116,94 @@ const DashboardPage = () => {
         </div>
       )}
 
-      <div style={{ padding: 16 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Government Hospitals Near You</div>
-        {[1, 2, 3].map((i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-            <div style={{ width: 8, height: 40, background: '#0D9488', borderRadius: 4, marginRight: 12 }} />
-            <div>
-              <div style={{ fontWeight: 600 }}>Bir Hospital</div>
-              <div style={{ color: '#64748b', fontSize: 12 }}>General & Specialist • Wait ~45 min • ⭐ 4.2</div>
-              <div style={{ color: '#16a34a', fontSize: 12 }}>Open</div>
-            </div>
+      {/* Search results */}
+      {isSearching && (
+        <div style={{ padding: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>
+            Search Results {filteredHospitals.length + filteredDoctors.length > 0 ? `(${filteredHospitals.length + filteredDoctors.length})` : ''}
           </div>
-        ))}
-      </div>
 
-      <div style={{ padding: 16 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Available Doctors Today</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[
-            { name: 'Dr. Ramesh Sharma', spec: 'Cardiologist', hosp: 'Bir Hospital', rating: 4.8 },
-            { name: 'Dr. Sita Koirala', spec: 'General Physician', hosp: 'TUTH', rating: 4.6 },
-            { name: 'Dr. Bikash Thapa', spec: 'Orthopaedic Surgeon', hosp: 'Bir Hospital', rating: 4.7 },
-          ].map((d, idx) => (
-            <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
+          {filteredHospitals.length === 0 && filteredDoctors.length === 0 && (
+            <div style={{ textAlign: 'center', padding: 40 }}>
+              <div style={{ fontSize: 40 }}>🔍</div>
+              <div style={{ color: '#647280', marginTop: 8 }}>No results found for "{searchQuery}"</div>
+            </div>
+          )}
+
+          {filteredHospitals.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontWeight: 600, fontSize: 14, color: '#64748b', marginBottom: 8 }}>Hospitals</div>
+              {filteredHospitals.map((h, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                  <div style={{ width: 8, height: 40, background: '#0D9488', borderRadius: 4, marginRight: 12 }} />
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{h.name}</div>
+                    <div style={{ color: '#64748b', fontSize: 12 }}>{h.type} • Wait {h.wait} • ⭐ {h.rating}</div>
+                    <div style={{ color: h.open ? '#16a34a' : '#dc2626', fontSize: 12 }}>{h.open ? 'Open' : 'Closed'}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {filteredDoctors.length > 0 && (
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14, color: '#64748b', marginBottom: 8 }}>Doctors</div>
+              {filteredDoctors.map((d, idx) => (
+                <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
+                    <div>
+                      <div style={{ fontWeight: 700 }}>{d.name}</div>
+                      <div style={{ color: '#64748b', fontSize: 12 }}>{d.spec} • {d.hosp}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8 }}>⭐ {d.rating}</div>
+                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={() => navigate('/doctor/1')}>View Profile</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Default sections - hidden during search */}
+      {!isSearching && (
+        <>
+          <div style={{ padding: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Government Hospitals Near You</div>
+            {hospitalsData.map((h, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                <div style={{ width: 8, height: 40, background: '#0D9488', borderRadius: 4, marginRight: 12 }} />
                 <div>
-                  <div style={{ fontWeight: 700 }}>{d.name}</div>
-                  <div style={{ color: '#64748b', fontSize: 12 }}>{d.spec} • {d.hosp}</div>
+                  <div style={{ fontWeight: 600 }}>{h.name}</div>
+                  <div style={{ color: '#64748b', fontSize: 12 }}>{h.type} • Wait {h.wait} • ⭐ {h.rating}</div>
+                  <div style={{ color: h.open ? '#16a34a' : '#dc2626', fontSize: 12 }}>{h.open ? 'Open' : 'Closed'}</div>
                 </div>
               </div>
-              <div style={{ marginTop: 8 }}>⭐ {d.rating}</div>
-              <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={() => navigate('/doctor/1')}>View Profile</button>
+            ))}
+          </div>
+
+          <div style={{ padding: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Available Doctors Today</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {doctorsData.map((d, idx) => (
+                <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
+                    <div>
+                      <div style={{ fontWeight: 700 }}>{d.name}</div>
+                      <div style={{ color: '#64748b', fontSize: 12 }}>{d.spec} • {d.hosp}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8 }}>⭐ {d.rating}</div>
+                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={() => navigate('/doctor/1')}>View Profile</button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
       <button
         className="btn-primary"
