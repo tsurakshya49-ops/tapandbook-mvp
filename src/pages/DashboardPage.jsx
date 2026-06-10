@@ -10,9 +10,9 @@ const hospitalsData = [
 ]
 
 const doctorsData = [
-  { name: 'Dr. Ramesh Sharma', spec: 'Cardiologist', hosp: 'Bir Hospital', rating: 4.8 },
-  { name: 'Dr. Sita Koirala', spec: 'General Physician', hosp: 'TUTH', rating: 4.6 },
-  { name: 'Dr. Bikash Thapa', spec: 'Orthopaedic Surgeon', hosp: 'Bir Hospital', rating: 4.7 },
+  { id: 1, name: 'Dr. Ramesh Sharma', spec: 'Cardiologist', hosp: 'Bir Hospital', rating: 4.8 },
+  { id: 2, name: 'Dr. Sita Koirala', spec: 'General Physician', hosp: 'TUTH', rating: 4.6 },
+  { id: 3, name: 'Dr. Bikash Thapa', spec: 'Orthopaedic Surgeon', hosp: 'Bir Hospital', rating: 4.7 },
 ]
 
 const DashboardPage = () => {
@@ -134,7 +134,7 @@ const DashboardPage = () => {
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontWeight: 600, fontSize: 14, color: '#64748b', marginBottom: 8 }}>Hospitals</div>
               {filteredHospitals.map((h, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                <div key={i} onClick={() => navigate('/book-appointment', { state: { hospital: h.name } })} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer' }}>
                   <div style={{ width: 8, height: 40, background: '#0D9488', borderRadius: 4, marginRight: 12 }} />
                   <div>
                     <div style={{ fontWeight: 600 }}>{h.name}</div>
@@ -150,7 +150,7 @@ const DashboardPage = () => {
             <div>
               <div style={{ fontWeight: 600, fontSize: 14, color: '#64748b', marginBottom: 8 }}>Doctors</div>
               {filteredDoctors.map((d, idx) => (
-                <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 12 }}>
+                <div key={idx} onClick={() => navigate(`/doctor/${d.id}`)} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: 12, cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
                     <div>
@@ -159,7 +159,7 @@ const DashboardPage = () => {
                     </div>
                   </div>
                   <div style={{ marginTop: 8 }}>⭐ {d.rating}</div>
-                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={() => navigate('/doctor/1')}>View Profile</button>
+                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={(e) => { e.stopPropagation(); navigate(`/doctor/${d.id}`) }}>View Profile</button>
                 </div>
               ))}
             </div>
@@ -173,7 +173,7 @@ const DashboardPage = () => {
           <div style={{ padding: 16 }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Government Hospitals Near You</div>
             {hospitalsData.map((h, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+              <div key={i} onClick={() => navigate('/book-appointment', { state: { hospital: h.name } })} style={{ display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 12, borderLeft: '6px solid #0D9488', padding: 12, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer' }}>
                 <div style={{ width: 8, height: 40, background: '#0D9488', borderRadius: 4, marginRight: 12 }} />
                 <div>
                   <div style={{ fontWeight: 600 }}>{h.name}</div>
@@ -188,7 +188,7 @@ const DashboardPage = () => {
             <div style={{ fontWeight: 700, fontSize: 16, color: '#1f2937', marginBottom: 8 }}>Available Doctors Today</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {doctorsData.map((d, idx) => (
-                <div key={idx} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                <div key={idx} onClick={() => navigate(`/doctor/${d.id}`)} style={{ background: '#fff', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#0D9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d.name.charAt(4)}</div>
                     <div>
@@ -197,7 +197,7 @@ const DashboardPage = () => {
                     </div>
                   </div>
                   <div style={{ marginTop: 8 }}>⭐ {d.rating}</div>
-                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={() => navigate('/doctor/1')}>View Profile</button>
+                  <button style={{ marginTop: 8, width: '100%', padding: 8, background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8 }} onClick={(e) => { e.stopPropagation(); navigate(`/doctor/${d.id}`) }}>View Profile</button>
                 </div>
               ))}
             </div>
