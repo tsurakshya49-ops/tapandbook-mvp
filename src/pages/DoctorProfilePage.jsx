@@ -27,7 +27,7 @@ const DoctorProfilePage = () => {
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
       <div style={{ padding: 12 }}>
-        <button onClick={() => window.history.back()}>← Back</button>
+        <button onClick={() => navigate('/dashboard')}>← Back</button>
       </div>
       <div style={{ background: '#0D9488', color: '#fff', padding: 24, borderRadius: 12, width: '100%', maxWidth: 520, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>

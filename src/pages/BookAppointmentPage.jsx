@@ -22,7 +22,7 @@ const BookAppointmentPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [hospital, setHospital] = useState('')
+  const [hospital, setHospital] = useState(location.state?.hospital || '')
   const [department, setDepartment] = useState('')
   const [date, setDate] = useState('')
   const [slot, setSlot] = useState('')
@@ -92,7 +92,7 @@ const BookAppointmentPage = () => {
     }
   }
 
-  const goBack = () => navigate('/patient-details', { state: prev })
+  const goBack = () => navigate('/dashboard')
 
   return (
     <div className="page-container">

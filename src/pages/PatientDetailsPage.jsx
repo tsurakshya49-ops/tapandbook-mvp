@@ -36,7 +36,7 @@ const PatientDetailsPage = () => {
     }
   }
 
-  const goBack = () => navigate('/')
+  const goBack = () => navigate('/dashboard')
 
   return (
     <div className="page-container">
