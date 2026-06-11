@@ -9,6 +9,10 @@ export const DOCTORS = [
   { id: 6, name: 'Dr. Priya Shrestha', initials: 'PS', specialty: 'Gynaecologist', hospital: 'TUTH', rating: 4.8, reviews: 156, experience: 14, availability: 'Today: Available' },
   { id: 7, name: 'Dr. Nabin Karki', initials: 'NK', specialty: 'General Physician', hospital: 'Civil Hospital', rating: 4.3, reviews: 45, experience: 6, availability: 'Today: Available' },
   { id: 8, name: 'Dr. Meera Joshi', initials: 'MJ', specialty: 'Paediatrician', hospital: 'Kanti Children\'s Hospital', rating: 4.7, reviews: 132, experience: 11, availability: 'Today: Busy' },
+  { id: 9, name: 'Dr. Ashok Pandey', initials: 'AP', specialty: 'Orthopaedic Surgeon', hospital: 'Bir Hospital', rating: 4.5, reviews: 64, experience: 18, availability: 'Today: Available' },
+  { id: 10, name: 'Dr. Dan Bahadur Karki', initials: 'DK', specialty: 'Paediatrician', hospital: 'Kanti Children\'s Hospital', rating: 4.6, reviews: 89, experience: 13, availability: 'Today: Available' },
+  { id: 11, name: 'Dr. Susma Poudel', initials: 'SP', specialty: 'Gynaecologist', hospital: 'TUTH', rating: 4.8, reviews: 145, experience: 16, availability: 'Today: Available' },
+  { id: 12, name: 'Dr. Shristi Chauhan', initials: 'SC', specialty: 'Cardiologist', hospital: 'Bir Hospital', rating: 4.7, reviews: 110, experience: 12, availability: 'Today: Available' },
 ]
 
 export const HOSPITALS = [

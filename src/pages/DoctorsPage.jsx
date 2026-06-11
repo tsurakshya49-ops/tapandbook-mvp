@@ -27,10 +27,19 @@ const DoctorsPage = () => {
   const navigate = useNavigate()
   const [activeCat, setActiveCat] = useState('All')
   const categories = ['All', 'General', 'Cardiology', 'Orthopaedics', 'Paediatrics', 'ENT', 'Gynaecology']
+  const categoryKeywords = {
+    'General': ['general'],
+    'Cardiology': ['cardio', 'cardiologist'],
+    'Orthopaedics': ['orthopaed'],
+    'Paediatrics': ['paediatric'],
+    'ENT': ['ent'],
+    'Gynaecology': ['gynaec'],
+  }
   const filtered = DOCTORS.filter((d) => {
     if (activeCat === 'All') return true
     const c = d.specialty.toLowerCase()
-    return c.includes(activeCat.toLowerCase())
+    const keywords = categoryKeywords[activeCat] || [activeCat.toLowerCase()]
+    return keywords.some(kw => c.includes(kw))
   })
 
   return (
