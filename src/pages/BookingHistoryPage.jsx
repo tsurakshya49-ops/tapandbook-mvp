@@ -52,6 +52,7 @@ const BookingHistoryPage = () => {
   const [error, setError] = useState(null)
   const [qrBooking, setQrBooking] = useState(null)
   const [cancellingId, setCancellingId] = useState(null)
+  const [cancelBookingId, setCancelBookingId] = useState(null)
 
   // Fetch bookings from API on component mount
   useEffect(() => {
@@ -84,8 +85,14 @@ const BookingHistoryPage = () => {
     setQrBooking(booking)
   }
 
-  const handleCancel = async (bookingId) => {
-    if (!window.confirm('Are you sure you want to cancel this appointment?')) return
+  const handleCancel = (bookingId) => {
+    setCancelBookingId(bookingId)
+  }
+
+  const confirmCancel = async () => {
+    const bookingId = cancelBookingId
+    if (!bookingId) return
+    setCancelBookingId(null)
     try {
       setCancellingId(bookingId)
       await cancelBooking(bookingId)
@@ -166,6 +173,20 @@ const BookingHistoryPage = () => {
       )}
 
       {qrBooking && <QRModal booking={qrBooking} onClose={() => setQrBooking(null)} />}
+
+      {cancelBookingId && (
+        <div onClick={() => setCancelBookingId(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 16, padding: 24, maxWidth: 340, width: '90%', textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>⚠️</div>
+            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Cancel Appointment?</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>Are you sure you want to cancel your appointment? Once cancel cannot be undone.</div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setCancelBookingId(null)} style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: '2px solid #0D9488', background: '#fff', color: '#0D9488', fontWeight: 700, cursor: 'pointer' }}>Keep Appointment</button>
+              <button onClick={confirmCancel} style={{ flex: 1, padding: '10px 16px', borderRadius: 10, border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Yes, Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
