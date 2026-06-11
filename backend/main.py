@@ -104,6 +104,19 @@ def get_bookings():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# PUT /bookings/{booking_id}/cancel - Cancel a booking
+@app.put("/bookings/{booking_id}/cancel")
+def cancel_booking(booking_id: int):
+    try:
+        result = supabase.table("bookings").update({"status": "Cancelled"}).eq("id", booking_id).execute()
+        if result.data:
+            return {"success": True, "data": result.data[0]}
+        else:
+            raise HTTPException(status_code=404, detail="Booking not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # POST /users - Save a new user to Supabase users table
 @app.post("/users")
 def create_user(user: UserCreate):

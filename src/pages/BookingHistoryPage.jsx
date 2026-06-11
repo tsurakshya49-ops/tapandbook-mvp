@@ -1,23 +1,48 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import BottomNav from '../components/BottomNav.jsx'
-import { getBookings } from '../services/api.js'
+import { getBookings, cancelBooking } from '../services/api.js'
 
-const BookingCard = ({ booking, color }) => (
-  <div className="card" style={{ padding: 12, borderLeft: `6px solid ${color || '#0D9488'}`, marginBottom: 12 }}>
+const BookingCard = ({ booking, color, onShowQR, onCancel }) => (
+  <div className="card" style={{ padding: 12, borderLeft: `6px solid ${color || '#0D9488'}`, marginBottom: 12, opacity: booking.status === 'Cancelled' ? 0.6 : 1 }}>
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <span>✅ {booking.status || 'Confirmed'}</span>
+      <span>{booking.status === 'Cancelled' ? '❌' : '✅'} {booking.status || 'Confirmed'}</span>
       <span style={{ color: '#6b7280' }}>{booking.appointment_date || 'N/A'} | {booking.time_slot || 'N/A'}</span>
     </div>
     <div style={{ fontWeight: 700 }}>{booking.doctor_name || 'Unknown Doctor'} — {booking.hospital || 'Hospital'}</div>
     <div style={{ color: '#6b7280' }}>Token: #{booking.token_number || 'N/A'} {booking.id ? `| Booking ID: ${booking.id}` : ''}</div>
     <div style={{ color: '#6b7280' }}>Patient: {booking.patient_name || 'N/A'}</div>
-    <div className="button-row" style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-      <button className="btn-outline" style={{ flex: 1 }} onClick={() => {}} >Show QR Code</button>
-      <button className="btn-outline" style={{ flex: 1, borderColor: '#dc2626', color: '#dc2626' }} onClick={() => {}} >Cancel Appointment</button>
-    </div>
+    {booking.status !== 'Cancelled' && (
+      <div className="button-row" style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+        <button className="btn-outline" style={{ flex: 1 }} onClick={() => onShowQR(booking)}>Show QR Code</button>
+        <button className="btn-outline" style={{ flex: 1, borderColor: '#dc2626', color: '#dc2626' }} onClick={() => onCancel(booking.id)}>Cancel Appointment</button>
+      </div>
+    )}
   </div>
 )
+
+const QRModal = ({ booking, onClose }) => {
+  if (!booking) return null
+  const qrContent = `${booking.patient_name}|${booking.hospital}|${booking.speciality}|${booking.appointment_date}|${booking.id}`
+
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 16, padding: 24, maxWidth: 340, width: '90%', textAlign: 'center' }}>
+        <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Booking QR Code</div>
+        <div style={{ marginBottom: 12 }}>
+          <QRCodeSVG value={qrContent} size={180} />
+        </div>
+        <div style={{ fontWeight: 600 }}>{booking.patient_name}</div>
+        <div style={{ color: '#6b7280', fontSize: 13 }}>{booking.doctor_name} — {booking.hospital}</div>
+        <div style={{ color: '#6b7280', fontSize: 13 }}>{booking.appointment_date} | {booking.time_slot}</div>
+        <div style={{ color: '#6b7280', fontSize: 13 }}>Token: #{booking.token_number}</div>
+        <div style={{ color: '#6b7280', fontSize: 12, marginTop: 8 }}>Show this QR code at the hospital reception</div>
+        <button onClick={onClose} style={{ marginTop: 12, padding: '8px 24px', background: '#0D9488', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Close</button>
+      </div>
+    </div>
+  )
+}
 
 const BookingHistoryPage = () => {
   const navigate = useNavigate()
@@ -25,6 +50,8 @@ const BookingHistoryPage = () => {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [qrBooking, setQrBooking] = useState(null)
+  const [cancellingId, setCancellingId] = useState(null)
 
   // Fetch bookings from API on component mount
   useEffect(() => {
@@ -53,10 +80,29 @@ const BookingHistoryPage = () => {
     fetchBookings()
   }, [])
 
-  // Separate bookings into upcoming and past based on date
+  const handleShowQR = (booking) => {
+    setQrBooking(booking)
+  }
+
+  const handleCancel = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return
+    try {
+      setCancellingId(bookingId)
+      await cancelBooking(bookingId)
+      // Update the booking status in local state
+      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'Cancelled' } : b))
+    } catch (err) {
+      console.error('Failed to cancel booking:', err)
+      alert('Failed to cancel appointment. Please try again.')
+    } finally {
+      setCancellingId(null)
+    }
+  }
+
+  // Separate bookings into upcoming and past based on date, excluding cancelled from upcoming
   const today = new Date().toISOString().split('T')[0]
-  const upcoming = bookings.filter(b => b.appointment_date >= today)
-  const past = bookings.filter(b => b.appointment_date < today)
+  const upcoming = bookings.filter(b => b.appointment_date >= today && b.status !== 'Cancelled')
+  const past = bookings.filter(b => b.appointment_date < today || b.status === 'Cancelled')
 
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
@@ -87,7 +133,7 @@ const BookingHistoryPage = () => {
       {!loading && !error && tab === 'Upcoming' && (
         <div style={{ padding: 12 }}>
           {upcoming.map((b, idx) => (
-            <BookingCard key={b.id || idx} booking={b} color="#0D9488" />
+            <BookingCard key={b.id || idx} booking={b} color="#0D9488" onShowQR={handleShowQR} onCancel={handleCancel} />
           ))}
           {upcoming.length === 0 && (
             <div style={{ textAlign: 'center', padding: 40 }}>
@@ -102,7 +148,7 @@ const BookingHistoryPage = () => {
       {!loading && !error && tab === 'Past' && (
         <div style={{ padding: 12 }}>
           {past.map((b, idx) => (
-            <BookingCard key={b.id || idx} booking={b} />
+            <BookingCard key={b.id || idx} booking={b} onShowQR={handleShowQR} onCancel={handleCancel} />
           ))}
           {past.length === 0 && (
             <div style={{ textAlign: 'center', padding: 40 }}>
@@ -112,6 +158,14 @@ const BookingHistoryPage = () => {
           )}
         </div>
       )}
+
+      {cancellingId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#fff', padding: 20, borderRadius: 12 }}>Cancelling...</div>
+        </div>
+      )}
+
+      {qrBooking && <QRModal booking={qrBooking} onClose={() => setQrBooking(null)} />}
 
       <BottomNav />
     </div>

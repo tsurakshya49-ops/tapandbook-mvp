@@ -33,9 +33,10 @@ const DashboardPage = () => {
         console.log('Dashboard - UserPhone from localStorage:', userPhone)
         console.log('Dashboard - First booking patient_phone:', allBookings[0]?.patient_phone)
         const userBookings = userPhone ? allBookings.filter(b => b.patient_phone === userPhone) : allBookings
-        setTotalBookings(userBookings.length)
-        setUpcomingCount(userBookings.filter(b => b.status === 'Confirmed' || b.status === 'confirmed').length)
-        setCompletedCount(userBookings.filter(b => b.status === 'Completed' || b.status === 'completed').length)
+        const activeBookings = userBookings.filter(b => b.status !== 'Cancelled' && b.status !== 'cancelled')
+        setTotalBookings(activeBookings.length)
+        setUpcomingCount(activeBookings.filter(b => b.status === 'Confirmed' || b.status === 'confirmed').length)
+        setCompletedCount(activeBookings.filter(b => b.status === 'Completed' || b.status === 'completed').length)
       } catch (err) {
         console.error('Failed to fetch booking stats:', err)
       }

@@ -63,6 +63,29 @@ export const getBookings = async () => {
   }
 }
 
+// Cancel a booking by ID
+export const cancelBooking = async (bookingId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/cancel`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await parseResponse(response)
+      throw new Error(errorData.detail || 'Failed to cancel booking')
+    }
+
+    const result = await parseResponse(response)
+    return result
+  } catch (error) {
+    console.error('Error cancelling booking:', error)
+    throw error
+  }
+}
+
 // Save a new user to Supabase
 export const saveUser = async (userData) => {
   try {
