@@ -26,6 +26,7 @@ const DoctorCard = ({ d, onView }) => {
 const DoctorsPage = () => {
   const navigate = useNavigate()
   const [activeCat, setActiveCat] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
   const categories = ['All', 'General', 'Cardiology', 'Orthopaedics', 'Paediatrics', 'ENT', 'Gynaecology']
   const categoryKeywords = {
     'General': ['general'],
@@ -35,12 +36,21 @@ const DoctorsPage = () => {
     'ENT': ['ent'],
     'Gynaecology': ['gynaec'],
   }
-  const filtered = DOCTORS.filter((d) => {
+  const categoryFiltered = DOCTORS.filter((d) => {
     if (activeCat === 'All') return true
     const c = d.specialty.toLowerCase()
     const keywords = categoryKeywords[activeCat] || [activeCat.toLowerCase()]
     return keywords.some(kw => c.includes(kw))
   })
+
+  const query = searchQuery.toLowerCase().trim()
+  const filtered = query
+    ? categoryFiltered.filter(d =>
+        d.name.toLowerCase().includes(query) ||
+        d.specialty.toLowerCase().includes(query) ||
+        d.hospital.toLowerCase().includes(query)
+      )
+    : categoryFiltered
 
   return (
     <div className="page-container" style={{ paddingBottom: 80 }}>
@@ -52,7 +62,10 @@ const DoctorsPage = () => {
       <div className="search" style={{ padding: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', background: '#f3f4f6', borderRadius: 12, padding: '10px 12px' }}>
           <span style={{ marginRight: 8 }}>🔎</span>
-          <input placeholder="Search by name or specialty..." style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%' }} />
+          <input placeholder="Search by name or specialty..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%' }} />
+          {query && (
+            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: '#6b7280', padding: '0 4px' }}>✕</button>
+          )}
         </div>
       </div>
 
